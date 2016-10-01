@@ -33,6 +33,7 @@ document.getElementsByTagName("BODY")[0].onload = function(){
 
 function addIcons(parentDiv){
     //Replace this with actual icon loading
+    alert("got here");
     var icons = ["http://www.freeiconspng.com/uploads/person-icon-person-icon-clipart-image-from-our-icon-clipart-category--9.png"];
     for(var i = 0; i < icons.length; i++)
     {
