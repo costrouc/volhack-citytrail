@@ -20,11 +20,13 @@ require([
 //get the modal
 var newUserModal = document.getElementById('newUserModal');
 //New user submit
-document.getElementById("NewUserForm").onsubmit = function() {newUserSubmit()};
+document.getElementById("newUserForm").onsubmit = function(){
+    newUserModal.style.display = "none";
+    alert('userName = ' + document.getElementById("newUserForm").elements["Username"].value); 
+    return false;
+};
+document.getElementById("newUserForm").onload = function(){
 
-function newUserSubmit() {
-	newUserModal.style.display("none");
-	alert('userName = ' 
-}
+};
 
 
