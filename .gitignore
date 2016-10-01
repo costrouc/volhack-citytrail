@@ -45,3 +45,8 @@ jspm_packages
 
 #vim swap files
 *.swp
+
+
+# python env
+env
+*.pyc
