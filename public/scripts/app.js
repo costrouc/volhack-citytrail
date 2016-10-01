@@ -20,7 +20,8 @@ var newUserModal = document.getElementById('newUserModal');
 //New user submit
 document.getElementById("newUserForm").onsubmit = function(){
     newUserModal.style.display = "none";
-    alert('userName = ' + document.getElementById("newUserForm").elements["Username"].value); 
+    var mainForm = document.getElementById("newUserForm");
+    sendPlayer(mainForm.elements["Username"].value, mainForm.elements["Icons"].value);
     return false; //Prevent page reload
 };
 
@@ -37,13 +38,18 @@ function addIcons(parentDiv){
         var curNode = document.createElement("label");
         var curRadio = document.createElement("input");
         curRadio.setAttribute("type", "radio");
-        curRadio.setAttribute("name", "icons");
-        curRadio.setAttribute("value", "small");
+        curRadio.setAttribute("name", "Icons");
+        curRadio.setAttribute("value", "player" + (i + 1));
         var curImage = document.createElement("img");
         curImage.setAttribute("src", icons[i]);
         curNode.appendChild(curRadio);
         curNode.appendChild(curImage);
-        parentDiv.appendChild(curNode); 
+        parentDiv.appendChild(curNode);
     }
 };
 
+function sendPlayer(username, playerIcon)
+{
+    console.log('userName = ' + username);
+    console.log('icon = ' + playerIcon);
+}

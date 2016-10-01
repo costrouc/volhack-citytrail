@@ -57,5 +57,5 @@ label > input + img{ /* image style for icons*/
 }
 
 label > input:checked + img{ /*radio checked imaged style*/
-        border:2px solid #f00;
+    border:2px solid #f00;
 }
