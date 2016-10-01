@@ -44,3 +44,18 @@ html, body {
     text-decoration: none;
     cursor: pointer;
 }
+
+label > input{ /* hide radio button*/
+    visibility: hidden;
+    position: absolute;
+}
+label > input + img{ /* image style for icons*/
+    cursor:pointer;
+    border:2px solid transparent;
+    height: 150px;
+    width: 150px;
+}
+
+label > input:checked + img{ /*radio checked imaged style*/
+        border:2px solid #f00;
+}
