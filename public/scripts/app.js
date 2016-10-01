@@ -21,6 +21,10 @@ var USER_SELECTION = {
     uid: null
 };
 
+var updateTimer;
+var mainMap;
+var graphicsLayer;
+
 var mock_server_output = {
     players: [
         {
@@ -161,11 +165,15 @@ require([
         });
 
         var tileLayer = new VectorTileLayer("/data/basemap-theme.json");
-        var graphicsLayer = new GraphicsLayer();
+        var gl = new gl();
         map.addLayer(tileLayer);
-        map.addLayer(graphicsLayer);
+        map.addLayer(gl);
 
-        renderScene(map, graphicsLayer, mock_server_output);
+        
+        
+        mainMap = map;
+        graphicsLayer = gl;
+        //renderScene(map, graphicsLayer, mock_server_output);
     };
 
     initMap([15, 65], 4);
@@ -204,8 +212,11 @@ document.getElementById("playerInput").onsubmit = function(){
 //Handle getting player icons
 window.onload = function(){
     addIcons(document.getElementById("newUserIcons"));
+    updateTimer = setInterval(checkForUpdate, 1000);
     updateSidePanel(mock_server_output["options"], mock_server_output["events"], mock_server_output["players"][0]);
 };
+
+
 
 function addIcons(parentDiv){
     //TODO: Replace this with actual icon loading
@@ -294,4 +305,60 @@ function updatePlayerStats(player)
 
     var movement = document.getElementById("movement");
     movement.innerHTML = "movement: " + player.transportation.toLowerCase();
+}
+
+function checkForUpdate()
+{
+    var request = new XMLHttpRequest();
+    request.open('GET', '/gameupdate', true);
+
+    request.onload = function() {
+        if (request.status >= 200 && request.status < 400) {
+            // Success!
+            var data = JSON.parse(request.responseText);
+            if(data.status)
+            {
+                clearInterval(updateTimer);
+                getUpdate();
+            }
+        } else {
+        // We reached our target server, but it returned an error
+
+        }
+    };
+
+    request.onerror = function() {
+    // There was a connection error of some sort
+    };
+
+    request.send();
+}
+
+function getUpdate()
+{
+    var request = new XMLHttpRequest();
+    request.open('GET', '/gamenext', true);
+
+    request.onload = function() {
+        if (request.status >= 200 && request.status < 400) {
+            // Success!
+            var data = JSON.parse(request.responseText);
+            gameUpdate(data);
+        } else {
+        // We reached our target server, but it returned an error
+
+        }
+    };
+
+    request.onerror = function() {
+    // There was a connection error of some sort
+    };
+
+    request.send();
+}
+
+function gameUpdate(serverOutput)
+{
+    updateSidePanel(serverOutput['options'], serverOutput['events'], serverOutput['players']);
+    renderScene(mainMap, graphicsLayer, serverOutput);
 }
