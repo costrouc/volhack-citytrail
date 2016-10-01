@@ -35,14 +35,17 @@ require([
 
 
 //Modal stuff
-//get the modal
-var newUserModal = document.getElementById('newUserModal');
 //New user submit
 document.getElementById("newUserForm").onsubmit = function(){
+    //get the modal
+    var newUserModal = document.getElementById('newUserModal');
     newUserModal.style.display = "none";
+
     var mainForm = document.getElementById("newUserForm");
     sendPlayer(mainForm.elements["Username"].value, mainForm.elements["Icons"].value);
-    return false; //Prevent page reload
+
+    //Prevent page reload
+    return false; 
 };
 
 //Handle getting player icons
@@ -51,7 +54,7 @@ window.onload = function(){
 };
 
 function addIcons(parentDiv){
-    //Replace this with actual icon loading
+    //TODO: Replace this with actual icon loading
     var icons = ["data/icons/player1.png", "data/icons/player2.png","data/icons/player3.png","data/icons/player4.png","data/icons/player5.png"];
     for(var i = 0; i < icons.length; i++)
     {
