@@ -4,6 +4,7 @@ import uuid
 import game
 
 app = Flask(__name__)
+app.secret_key = 'qwe3dsdoasdfin4n4jdj'
 
 static_path = 'public'
 
@@ -11,12 +12,13 @@ static_path = 'public'
 
 @app.route('/signup', methods =['POST'])
 def signup_view():
-    user = request.json()
-    user.update({'uid': uuid.uuid4()})
+    user = request.json
+    print(user)
+    user.update({'uid': str(uuid.uuid4())})
     game.add_user(user)
     session['user'] = user
     print(user)
-    return jsonify(user)
+    return jsonify(user), 200
 
 
 
