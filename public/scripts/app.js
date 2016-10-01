@@ -21,84 +21,9 @@ var USER_SELECTION = {
     uid: null
 };
 
-var updateTimer;
-var mainMap;
-var graphicsLayer;
-
-var mock_server_output = {
-    players: [
-        {
-            username: "Chris Ostrouchov",
-            uid: "1234",
-            position: {x: -110.4140625, y: 30.2578125},
-            image: "/data/icons/player1.png",
-            transportation: "WALK",
-            path: null
-        },
-        {
-            username: "Tyler Whittin",
-            uid: "1432",
-            position: {x: -120.4140625, y: 50.2578125},
-            image: "/data/icons/player3.png",
-            transportation: "WALK",
-            path: null
-        },
-        {
-            username: 'Anonymous Coward',
-            uid: "asdf",
-            position: {x: 10.00, y: -10.2578125},
-            image: "/data/icons/player2.png",
-            transportation: "BIKE",
-            path: null
-        },
-        {
-            username: 'Bob',
-            uid: "zxcv",
-            position: {x: -90.4140625, y: -50.2578125},
-            image: "/data/icons/player5.png",
-            transportation: "CAR",
-            path: null
-        },
-        {
-            username: 'costrouc',
-            uid: "qwer",
-            position: {x: 70.4140625, y: 2.2578125},
-            image: "/data/icons/player4.png",
-            transportation: "WALK",
-            path: null
-        }
-    ],
-    locations: [
-        {
-            position: {x: 30.4140625, y: 100.2578125},
-            type: "CAR",
-            image: "/data/icons/location1.png"
-        },
-        {
-            position: {x: 50.4140625, y: 0.2578125},
-            type: "CAR",
-            image: "/data/icons/location1.png"
-        },
-        {
-            position: {x: -10.4140625, y: -50.2578125},
-            type: "EXIT",
-            image: "/data/icons/destination.png"
-        },
-        {
-            position: {x: 20.4140625, y: 10.2578125},
-            type: "BIKE",
-            image: "/data/icons/location2.png"
-        }
-    ],
-    options: [
-        "Option 1", "Option 2", "Option 3", "Option 4", "Option 5"
-    ],
-    events: [
-        "You got Polio!", "You won..."
-    ],
-    paths: [null, null, null, null, null]
-};
-
+var updateTimer = null;
+var mainMap = null;
+var graphicsLayer = null;
 
 require([
     "esri/map",
@@ -106,12 +31,14 @@ require([
     "esri/layers/VectorTileLayer",
     "esri/graphic", "esri/layers/GraphicsLayer",
     "esri/geometry/Point", "esri/symbols/PictureMarkerSymbol",
+    "esri/geometry/webMercatorUtils",
     "dojo/domReady!"
 ], function(Map,
             InfoTemplate,
             VectorTileLayer,
             Graphic, GraphicsLayer,
-            Point, PictureMarkerSymbol) {
+            Point, PictureMarkerSymbol,
+            webMercatorUtils) {
 
     var drawPlayers = function(map, gl, players) {
         players.forEach(function(player) {
@@ -157,7 +84,8 @@ require([
 
         map.on('click', function(e) {
             USER_SELECTION.uid = UID;
-            USER_SELECTION.position = e.mapPoint.toJson();
+            USER_SELECTION.position = webMercatorUtils.webMercatorToGeographic(e.mapPoint);
+            debugger;
 
             console.log('User Select Target Location');
             console.log('Position: ', USER_SELECTION.position);
@@ -328,7 +256,7 @@ function checkForUpdate()
     };
 
     request.onerror = function() {
-    // There was a connection error of some sort
+    // There was a conne:wction error of some sort
     };
 
     request.send();
