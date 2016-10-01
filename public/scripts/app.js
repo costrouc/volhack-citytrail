@@ -246,7 +246,8 @@ require([
 
 //Modal stuff
 //New user submit
-document.getElementById("newUserForm").onsubmit = function(){
+document.getElementById("newUserForm").onsubmit = function(e){
+    e.preventDefault();    
     //get the modal
     var newUserModal = document.getElementById('newUserModal');
     newUserModal.style.display = "none";
@@ -255,18 +256,35 @@ document.getElementById("newUserForm").onsubmit = function(){
     sendPlayer(mainForm.elements["Username"].value, mainForm.elements["Icons"].value);
 
     //Prevent page reload
-    return false; 
+    return false;
 };
 
 document.getElementById("playerInput").onsubmit = function(){
-    
+    e.preventDefault();
+
+    var playerInputForm = document.getElementById("playerInput");
+
+
+
+    $.ajax({
+        url: 'gameUpdate',
+        data: JSON.stringify(USER_SELECTION),
+        type: "POST",
+        success: function(response){
+            console.log(response);
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+
     return false;
 };
 
 //Handle getting player icons
 window.onload = function(){
     addIcons(document.getElementById("newUserIcons"));
-    updateSidePanel(mock_options, mock_events, mock_players[0]);
+    updateSidePanel(mock_server_output["options"], mock_server_output["events"], mock_server_output["players"][0]);
 };
 
 function addIcons(parentDiv){
@@ -289,15 +307,34 @@ function addIcons(parentDiv){
 
 function sendPlayer(username, playerIcon)
 {
+    console.log('sending user');
     console.log('userName = ' + username);
     console.log('icon = ' + playerIcon);
+
+    var userInfo = {
+        username: username,
+        icon: playerIcon
+    };
+
+    $.ajax({
+           url: '/signup',
+           data: JSON.stringify(userInfo) ,
+           type: 'POST',
+           success: function(response){
+                console.log(response);
+           },
+           error: function(error){
+                console.log(error);
+           }
+    });
+
 }
 
 function updateSidePanel(options, events, player)
 {
     updateEvent(events);
     updateOptions(options);
-    updatePlayerStats(player);    
+    updatePlayerStats(player);
 }
 
 function updateEvent(events)
@@ -310,12 +347,11 @@ function updateEvent(events)
     }
 
     //TODO: update size?
-    
 }
 
 function updateOptions(options)
 {
-    var optionList = document.getElementById("playerOptions");   
+    var optionList = document.getElementById("playerOptions");
     while(optionList.firstChild)
     {
         optionList.removeChild(optionDiv.firstChild);        
@@ -327,12 +363,12 @@ function updateOptions(options)
        var curButton = document.createElement("input");
        curButton.setAttribute("type", "radio");
        curButton.setAttribute("name", "options");
-       curButton.setAttribute("value", options[i]); 
+       curButton.setAttribute("value", options[i]);
 
        var curLabel = document.createElement("label");
        curLabel.setAttribute("for", options[i]);
        curLabel.innerHTML = options[i];
-       
+
        curListItem.appendChild(curButton);
        curListItem.appendChild(curLabel);
        optionList.appendChild(curListItem);

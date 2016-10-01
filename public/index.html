@@ -12,7 +12,7 @@
         <link rel="stylesheet" href="https://js.arcgis.com/3.18/esri/css/esri.css">
     </head>
     <body>
-    <div id="viewDiv"></div>
+    <div id="viewDiv" ></div>
     <div id="newUserModal" class="modal">
         <div class="modalcontent">
             <form id="newUserForm">
@@ -24,7 +24,7 @@
         </div>
     </div>
     <div id="mapView"></div>
-    <div id="sidePanel">
+    <div id="sidePanel" style="float:right;width:20%">
         <div id="eventData">
             <p id="eventText">Events</p>
         </div>
@@ -41,6 +41,7 @@
 
 
     <script src="https://js.arcgis.com/3.18/"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="scripts/app.js"></script>
     </body>
 </html>
