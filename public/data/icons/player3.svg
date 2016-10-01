@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="28.222mm" width="28.222mm" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 99.999997 99.999997">
+ <metadata id="metadata7">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer1" transform="translate(-21.862 -153.25)">
+  <g fill-opacity=".33333">
+   <g stroke-dasharray="4.8418694, 9.68373881" stroke-width="4.8419">
+    <circle id="path4136" cx="71.862" cy="203.25" stroke="#0c0" r="47.579" fill="#9c3"/>
+    <circle id="path4136-3" cx="73.34" cy="320.76" stroke="#f60" r="47.579" fill="#fc0"/>
+    <circle id="path4136-6" cx="79.338" cy="445.22" stroke="#404040" r="47.579" fill="#bfbfbf"/>
+    <circle id="path4136-7" cx="80.837" cy="568.17" stroke="#f60" r="47.579" fill="#c00"/>
+    <circle id="path4136-2" cx="67.342" cy="76.348" stroke="#039" r="47.579" fill="#69f"/>
+   </g>
+   <g stroke-dasharray="4.93948609, 9.87897219" stroke-width="4.9395">
+    <rect id="rect4210" height="95.061" width="95.061" stroke="#0c0" y="150.74" x="194.79" fill="#9c3"/>
+    <rect id="rect4210-7" height="95.061" width="95.061" stroke="#039" y="27.798" x="193.27" fill="#69f"/>
+    <rect id="rect4210-0" height="95.061" width="95.061" stroke="#f60" y="272.21" x="196.27" fill="#fc0"/>
+    <rect id="rect4210-9" height="95.061" width="95.061" stroke="#000" y="396.66" x="199.27" fill="#bfbfbf"/>
+    <rect id="rect4210-3" height="95.061" width="95.061" stroke="#f60" y="518.12" x="203.77" fill="#c00"/>
+   </g>
+  </g>
+  <g id="g4262" fill-opacity=".66667" transform="matrix(.64305 0 0 .64305 45.076 95.717)" stroke="#f60" stroke-dasharray="5, 10" stroke-width="5" fill="#c00">
+   <rect id="rect4245" transform="rotate(45)" height="178.44" width="23.991" y="-247.38" x="629.29"/>
+   <rect id="rect4245-6" transform="rotate(-45)" height="185.93" width="23.991" y="548.32" x="146.17"/>
+  </g>
+ </g>
+</svg>
