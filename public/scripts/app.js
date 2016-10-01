@@ -1,3 +1,4 @@
+"use strict";
 require([
     "esri/Map",
     "esri/views/MapView",
@@ -29,26 +30,25 @@ document.getElementById("newUserForm").onsubmit = function(){
 };
 
 //Handle getting player icons
-document.getElementsByTagName("BODY")[0].onload = function(){
+window.onload = function(){
     addIcons(document.getElementById("newUserIcons"));
 };
 
 function addIcons(parentDiv){
     //Replace this with actual icon loading
-    alert("got here");
-    var icons = ["http://www.freeiconspng.com/uploads/person-icon-person-icon-clipart-image-from-our-icon-clipart-category--9.png"];
+    var icons = ["data/icons/player1.png", "data/icons/player2.png","data/icons/player3.png","data/icons/player4.png","data/icons/player5.png"];
     for(var i = 0; i < icons.length; i++)
     {
         var curNode = document.createElement("label");
         var curRadio = document.createElement("input");
         curRadio.setAttribute("type", "radio");
-        curRadio.setAttribute("name", icons[i].substring(0, icons[i].length - 4));
+        curRadio.setAttribute("name", "icons");
         curRadio.setAttribute("value", "small");
         var curImage = document.createElement("img");
         curImage.setAttribute("src", icons[i]);
         curNode.appendChild(curRadio);
         curNode.appendChild(curImage);
-        parentDiv.appendChild(curNode);
+        parentDiv.appendChild(curNode); 
     }
 };
 
