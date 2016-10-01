@@ -14,3 +14,13 @@ require([
         center: [15, 65]
     });
 });
+
+
+//Modal stuff
+//get the modal
+var newUserModal = document.getElementById('newUserModal');
+// Get the close button
+var closeNewUser = document.getElementById('newUserOK');
+closeNewUser.onclick = function() {
+	newUserModal.style.display = "none";
+}
