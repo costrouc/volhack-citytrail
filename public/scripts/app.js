@@ -28,12 +28,14 @@ require([
     "esri/layers/VectorTileLayer",
     "esri/graphic", "esri/layers/GraphicsLayer",
     "esri/geometry/Point", "esri/symbols/PictureMarkerSymbol",
+    "esri/geometry/webMercatorUtils",
     "dojo/domReady!"
 ], function(Map,
             InfoTemplate,
             VectorTileLayer,
             Graphic, GraphicsLayer,
-            Point, PictureMarkerSymbol) {
+            Point, PictureMarkerSymbol,
+            webMercatorUtils) {
 
     var drawPlayers = function(map, gl, players) {
         players.forEach(function(player) {
@@ -79,7 +81,8 @@ require([
 
         map.on('click', function(e) {
             USER_SELECTION.uid = UID;
-            USER_SELECTION.position = e.mapPoint.toJson();
+            USER_SELECTION.position = webMercatorUtils.webMercatorToGeographic(e.mapPoint);
+            debugger;
 
             console.log('User Select Target Location');
             console.log('Position: ', USER_SELECTION.position);
