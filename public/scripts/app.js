@@ -1,77 +1,5 @@
 "use strict";
 
-var UID = "asdf";
-var mock_players = [
-    {
-        username: "Chris Ostrouchov",
-        uid: "1234",
-        position: {x: -110.4140625, y: 30.2578125},
-        image: "/data/icons/player1.png",
-        transportation: "WALK",
-        path: null
-    },
-    {
-        username: "Tyler Whittin",
-        uid: "1432",
-        position: {x: -120.4140625, y: 50.2578125},
-        image: "/data/icons/player3.png",
-        transportation: "WALK",
-        path: null
-    },
-    {
-        username: 'Anonymous Coward',
-        uid: "asdf",
-        position: {x: 10.00, y: -10.2578125},
-        image: "/data/icons/player2.png",
-        transportation: "BIKE",
-        path: null
-    },
-    {
-        username: 'Bob',
-        uid: "zxcv",
-        position: {x: -90.4140625, y: -50.2578125},
-        image: "/data/icons/player5.png",
-        transportation: "CAR",
-        path: null
-    },
-    {
-        username: 'costrouc',
-        uid: "qwer",
-        position: {x: 70.4140625, y: 2.2578125},
-        image: "/data/icons/player4.png",
-        transportation: "WALK",
-        path: null
-    }
-];
-
-var mock_locations = [
-    {
-        position: {x: 30.4140625, y: 100.2578125},
-        type: "CAR",
-        image: "/data/icons/location1.png"
-    },
-    {
-        position: {x: 50.4140625, y: 0.2578125},
-        type: "CAR",
-        image: "/data/icons/location1.png"
-    },
-    {
-        position: {x: -10.4140625, y: -50.2578125},
-        type: "EXIT",
-        image: "/data/icons/destination.png"
-    },
-    {
-        position: {x: 30.4140625, y: -90.2578125},
-        type: "BIKE",
-        image: "/data/icons/location2.png"
-    }
-];
-
-var mock_userSelection = {
-    option: 2,
-    target: {x: 10.0, y: 30.0},
-    uid: ""
-}
 // Global Settings
 var LOCATION_TYPES = ["CAR", "BIKE", "EXIT"];
 var PLAYER_SIZE = 30; // px
@@ -247,7 +175,7 @@ require([
 //Modal stuff
 //New user submit
 document.getElementById("newUserForm").onsubmit = function(e){
-    e.preventDefault();    
+    e.preventDefault();
     //get the modal
     var newUserModal = document.getElementById('newUserModal');
     newUserModal.style.display = "none";
@@ -264,19 +192,11 @@ document.getElementById("playerInput").onsubmit = function(){
 
     var playerInputForm = document.getElementById("playerInput");
 
+    var request = new XMLHttpRequest();
+    request.open('POST', '/gameupdate', true);
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    request.send(JSON.stringify(USER_SELECTION));
 
-
-    $.ajax({
-        url: 'gameUpdate',
-        data: JSON.stringify(USER_SELECTION),
-        type: "POST",
-        success: function(response){
-            console.log(response);
-        },
-        error: function(error){
-            console.log(error);
-        }
-    });
 
     return false;
 };
@@ -316,18 +236,10 @@ function sendPlayer(username, playerIcon)
         icon: playerIcon
     };
 
-    $.ajax({
-           url: '/signup',
-           data: JSON.stringify(userInfo) ,
-           type: 'POST',
-           success: function(response){
-                console.log(response);
-           },
-           error: function(error){
-                console.log(error);
-           }
-    });
-
+    var request = new XMLHttpRequest();
+    request.open('POST', '/signup', true);
+    request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    request.send(JSON.stringify(userInfo));
 }
 
 function updateSidePanel(options, events, player)
@@ -354,7 +266,7 @@ function updateOptions(options)
     var optionList = document.getElementById("playerOptions");
     while(optionList.firstChild)
     {
-        optionList.removeChild(optionDiv.firstChild);        
+        optionList.removeChild(optionDiv.firstChild);
     }
     for(var i = 0; i < options.length; ++i)
     {
