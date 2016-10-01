@@ -8,13 +8,14 @@
         <meta name="author" content="Volhacks">
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
         <link rel="stylesheet" href="stylesheets/style.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
         <link rel="stylesheet" href="https://js.arcgis.com/3.18/esri/css/esri.css">
     </head>
     <body>
     <div id="viewDiv" ></div>
-    <div id="newUserModal" class="modal">
-        <div class="modalcontent">
+    <div id="newUserModal" class="modal-dialog" role="document">
+        <div class="modal-content">
             <form id="newUserForm">
                 <input type="text" name="Username" placeholder="username"\> </br>
                 <p>Select Icon:</p>
@@ -24,7 +25,7 @@
         </div>
     </div>
     <div id="mapView"></div>
-    <div id="sidePanel" style="float:right;width:20%">
+    <div id="sidePanel" class="col-md-4">
         <div id="eventData">
             <p id="eventText">Events</p>
         </div>
