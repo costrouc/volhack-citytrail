@@ -82,7 +82,6 @@ require([
         map.on('click', function(e) {
             USER_SELECTION.uid = UID;
             USER_SELECTION.position = webMercatorUtils.webMercatorToGeographic(e.mapPoint);
-            debugger;
 
             console.log('User Select Target Location');
             console.log('Position: ', USER_SELECTION.position);
