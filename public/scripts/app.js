@@ -19,8 +19,12 @@ require([
 //Modal stuff
 //get the modal
 var newUserModal = document.getElementById('newUserModal');
-// Get the close button
-var closeNewUser = document.getElementById('newUserOK');
-closeNewUser.onclick = function() {
-	newUserModal.style.display = "none";
+//New user submit
+document.getElementById("NewUserForm").onsubmit = function() {newUserSubmit()};
+
+function newUserSubmit() {
+	newUserModal.style.display("none");
+	alert('userName = ' 
 }
+
+
