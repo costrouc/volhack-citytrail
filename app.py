@@ -9,16 +9,31 @@ app.secret_key = 'qwe3dsdoasdfin4n4jdj'
 static_path = 'public'
 
 
-
 @app.route('/signup', methods =['POST'])
 def signup_view():
     user = request.json
-    print(user)
     user.update({'uid': str(uuid.uuid4())})
     game.add_user(user)
     session['user'] = user
     print(user)
-    return jsonify(user), 200
+    return jsonify(user)
+
+@app.route('/gamesubmit', methods=['POST'])
+def gamesubmit_view():
+    user_action = request.json
+    print(user_action)
+    return jsonify({"recieved": True})
+
+
+@app.route('/gamenext')
+def gamenext_view():
+    return jsonify(game.mock_server_output)
+
+
+@app.route('/gameready')
+def gameupdate_view():
+    # Update view with u
+    return jsonify({"status": True})
 
 
 
