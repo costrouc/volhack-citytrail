@@ -1,5 +1,77 @@
 "use strict";
 
+var UID = "asdf";
+var mock_players = [
+    {
+        username: "Chris Ostrouchov",
+        uid: "1234",
+        position: {x: -110.4140625, y: 30.2578125},
+        image: "/data/icons/player1.png",
+        transportation: "WALK",
+        path: null
+    },
+    {
+        username: "Tyler Whittin",
+        uid: "1432",
+        position: {x: -120.4140625, y: 50.2578125},
+        image: "/data/icons/player3.png",
+        transportation: "WALK",
+        path: null
+    },
+    {
+        username: 'Anonymous Coward',
+        uid: "asdf",
+        position: {x: 10.00, y: -10.2578125},
+        image: "/data/icons/player2.png",
+        transportation: "BIKE",
+        path: null
+    },
+    {
+        username: 'Bob',
+        uid: "zxcv",
+        position: {x: -90.4140625, y: -50.2578125},
+        image: "/data/icons/player5.png",
+        transportation: "CAR",
+        path: null
+    },
+    {
+        username: 'costrouc',
+        uid: "qwer",
+        position: {x: 70.4140625, y: 2.2578125},
+        image: "/data/icons/player4.png",
+        transportation: "WALK",
+        path: null
+    }
+];
+
+var mock_locations = [
+    {
+        position: {x: 30.4140625, y: 100.2578125},
+        type: "CAR",
+        image: "/data/icons/location1.png"
+    },
+    {
+        position: {x: 50.4140625, y: 0.2578125},
+        type: "CAR",
+        image: "/data/icons/location1.png"
+    },
+    {
+        position: {x: -10.4140625, y: -50.2578125},
+        type: "EXIT",
+        image: "/data/icons/destination.png"
+    },
+    {
+        position: {x: 30.4140625, y: -90.2578125},
+        type: "BIKE",
+        image: "/data/icons/location2.png"
+    }
+];
+
+var mock_userSelection = {
+    option: 2,
+    target: {x: 10.0, y: 30.0},
+    uid: ""
+}
 // Global Settings
 var LOCATION_TYPES = ["CAR", "BIKE", "EXIT"];
 var PLAYER_SIZE = 30; // px
@@ -173,23 +245,50 @@ require([
 
 
 //Modal stuff
-//get the modal
-var newUserModal = document.getElementById('newUserModal');
 //New user submit
-document.getElementById("newUserForm").onsubmit = function(){
+document.getElementById("newUserForm").onsubmit = function(e){
+    e.preventDefault();    
+    //get the modal
+    var newUserModal = document.getElementById('newUserModal');
     newUserModal.style.display = "none";
+
     var mainForm = document.getElementById("newUserForm");
     sendPlayer(mainForm.elements["Username"].value, mainForm.elements["Icons"].value);
-    return false; //Prevent page reload
+
+    //Prevent page reload
+    return false;
+};
+
+document.getElementById("playerInput").onsubmit = function(){
+    e.preventDefault();
+
+    var playerInputForm = document.getElementById("playerInput");
+
+
+
+    $.ajax({
+        url: 'gameUpdate',
+        data: JSON.stringify(USER_SELECTION),
+        type: "POST",
+        success: function(response){
+            console.log(response);
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+
+    return false;
 };
 
 //Handle getting player icons
 window.onload = function(){
     addIcons(document.getElementById("newUserIcons"));
+    updateSidePanel(mock_server_output["options"], mock_server_output["events"], mock_server_output["players"][0]);
 };
 
 function addIcons(parentDiv){
-    //Replace this with actual icon loading
+    //TODO: Replace this with actual icon loading
     var icons = ["data/icons/player1.png", "data/icons/player2.png","data/icons/player3.png","data/icons/player4.png","data/icons/player5.png"];
     for(var i = 0; i < icons.length; i++)
     {
@@ -208,6 +307,79 @@ function addIcons(parentDiv){
 
 function sendPlayer(username, playerIcon)
 {
+    console.log('sending user');
     console.log('userName = ' + username);
     console.log('icon = ' + playerIcon);
+
+    var userInfo = {
+        username: username,
+        icon: playerIcon
+    };
+
+    $.ajax({
+           url: '/signup',
+           data: JSON.stringify(userInfo) ,
+           type: 'POST',
+           success: function(response){
+                console.log(response);
+           },
+           error: function(error){
+                console.log(error);
+           }
+    });
+
+}
+
+function updateSidePanel(options, events, player)
+{
+    updateEvent(events);
+    updateOptions(options);
+    updatePlayerStats(player);
+}
+
+function updateEvent(events)
+{
+    var eventText = document.getElementById("eventText");
+    eventText.innerHTML = "";
+    for(var i = 0; i < events.length; i++)
+    {
+            eventText.innerHTML += events[i] + "</br>";
+    }
+
+    //TODO: update size?
+}
+
+function updateOptions(options)
+{
+    var optionList = document.getElementById("playerOptions");
+    while(optionList.firstChild)
+    {
+        optionList.removeChild(optionDiv.firstChild);        
+    }
+    for(var i = 0; i < options.length; ++i)
+    {
+       var curListItem = document.createElement("li");
+
+       var curButton = document.createElement("input");
+       curButton.setAttribute("type", "radio");
+       curButton.setAttribute("name", "options");
+       curButton.setAttribute("value", options[i]);
+
+       var curLabel = document.createElement("label");
+       curLabel.setAttribute("for", options[i]);
+       curLabel.innerHTML = options[i];
+
+       curListItem.appendChild(curButton);
+       curListItem.appendChild(curLabel);
+       optionList.appendChild(curListItem);
+    }
+}
+
+function updatePlayerStats(player)
+{
+    var username = document.getElementById("user");
+    username.innerHTML = player.username;
+
+    var movement = document.getElementById("movement");
+    movement.innerHTML = "movement: " + player.transportation.toLowerCase();
 }
