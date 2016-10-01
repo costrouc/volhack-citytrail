@@ -1,4 +1,88 @@
 "use strict";
+
+var UID = "asdf";
+var mock_players = [
+    {
+        username: "Chris Ostrouchov",
+        uid: "1234"
+        position: {x: -110.4140625, y: 30.2578125},
+        image: "/data/icons/player1.png",
+        transportation: "WALK",
+        path: null
+    },
+    {
+        username: "Tyler Whittin",
+        uid: "1432"
+        position: {x: -120.4140625, y: 50.2578125},
+        image: "/data/icons/player3.png",
+        transportation: "WALK",
+        path: null
+    },
+    {
+        username: 'Anonymous Coward',
+        uid: "asdf",
+        position: {x: 10.00, y: -10.2578125},
+        image: "/data/icons/player2.png",
+        transportation: "BIKE",
+        path: null
+    },
+    {
+        username: 'Bob',
+        uid: "zxcv",
+        position: {x: -90.4140625, y: -50.2578125},
+        image: "/data/icons/player5.png",
+        transportation: "CAR",
+        path: null
+    },
+    {
+        username: 'costrouc',
+        uid: "qwer",
+        position: {x: 70.4140625, y: 2.2578125},
+        image: "/data/icons/player4.png",
+        transportation: "WALK",
+        path: null
+    }
+];
+
+var mock_locations = [
+    {
+        position: {x: 30.4140625, y: 100.2578125},
+        type: "CAR",
+        image: "/data/icons/location1.png"
+    },
+    {
+        position: {x: 50.4140625, y: 0.2578125},
+        type: "CAR",
+        image: "/data/icons/location1.png"
+    },
+    {
+        position: {x: -10.4140625, y: -50.2578125},
+        type: "EXIT",
+        image: "/data/icons/destination.png"
+    },
+    {
+        position: {x: 30.4140625, y: -90.2578125},
+        type: "BIKE",
+        image: "/data/icons/location2.png"
+    }
+];
+
+var mock_userSelection = {
+    option: 2,
+    target: {x: 10.0, y: 30.0},
+    uid:
+};
+
+var mock_options = [
+    "Option 1", "Option 2", "Option 3", "Option 4", "Option 5"
+];
+
+var mock_events = [
+    "You got Polio!", "You won..."
+];
+
+var locationTypes = ["CAR", "BIKE", "EXIT"];
+
 require([
     "esri/map",
     "esri/layers/VectorTileLayer",
