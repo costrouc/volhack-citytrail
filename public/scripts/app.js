@@ -4,7 +4,7 @@ var UID = "asdf";
 var mock_players = [
     {
         username: "Chris Ostrouchov",
-        uid: "1234"
+        uid: "1234",
         position: {x: -110.4140625, y: 30.2578125},
         image: "/data/icons/player1.png",
         transportation: "WALK",
@@ -12,7 +12,7 @@ var mock_players = [
     },
     {
         username: "Tyler Whittin",
-        uid: "1432"
+        uid: "1432",
         position: {x: -120.4140625, y: 50.2578125},
         image: "/data/icons/player3.png",
         transportation: "WALK",
@@ -70,7 +70,7 @@ var mock_locations = [
 var mock_userSelection = {
     option: 2,
     target: {x: 10.0, y: 30.0},
-    uid:
+    uid: ""
 };
 
 var mock_options = [
@@ -132,9 +132,15 @@ document.getElementById("newUserForm").onsubmit = function(){
     return false; 
 };
 
+document.getElementById("playerInput").onsubmit = function(){
+    
+    return false;
+};
+
 //Handle getting player icons
 window.onload = function(){
     addIcons(document.getElementById("newUserIcons"));
+    updateSidePanel(mock_options, mock_events, mock_players[0]);
 };
 
 function addIcons(parentDiv){
@@ -159,4 +165,59 @@ function sendPlayer(username, playerIcon)
 {
     console.log('userName = ' + username);
     console.log('icon = ' + playerIcon);
+}
+
+function updateSidePanel(options, events, player)
+{
+    updateEvent(events);
+    updateOptions(options);
+    updatePlayerStats(player);    
+}
+
+function updateEvent(events)
+{
+    var eventText = document.getElementById("eventText");
+    eventText.innerHTML = "";
+    for(var i = 0; i < events.length; i++)
+    {
+            eventText.innerHTML += events[i] + "</br>";
+    }
+
+    //TODO: update size?
+    
+}
+
+function updateOptions(options)
+{
+    var optionList = document.getElementById("playerOptions");   
+    while(optionList.firstChild)
+    {
+        optionList.removeChild(optionDiv.firstChild);        
+    }
+    for(var i = 0; i < options.length; ++i)
+    {
+       var curListItem = document.createElement("li");
+
+       var curButton = document.createElement("input");
+       curButton.setAttribute("type", "radio");
+       curButton.setAttribute("name", "options");
+       curButton.setAttribute("value", options[i]); 
+
+       var curLabel = document.createElement("label");
+       curLabel.setAttribute("for", options[i]);
+       curLabel.innerHTML = options[i];
+       
+       curListItem.appendChild(curButton);
+       curListItem.appendChild(curLabel);
+       optionList.appendChild(curListItem);
+    }
+}
+
+function updatePlayerStats(player)
+{
+    var username = document.getElementById("user");
+    username.innerHTML = player.username;
+
+    var movement = document.getElementById("movement");
+    movement.innerHTML = "movement: " + player.transportation.toLowerCase();
 }

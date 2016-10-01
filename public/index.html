@@ -19,13 +19,28 @@
                 <input type="text" name="Username" placeholder="username"\> </br>
                 <p>Select Icon:</p>
                 <div id=newUserIcons></div> </br>
-                <input type="submit" value="SUBMIT"\>
+                <input type="submit" value="submit"\>
             </form>
         </div>
     </div>
-        <div id="mapView"></div>
+    <div id="mapView"></div>
+    <div id="sidePanel">
+        <div id="eventData">
+            <p id="eventText">Events</p>
+        </div>
+        <div id="playerStats">
+            <p id="user">User</p>
+            <p id="movement">Walking</p>    
+        </div>
+        <form id = "playerInput">
+            <p>Select Option:</p>
+            <ul id="playerOptions" class = "options"></ul>
+            <input type="submit" value="submit"\>
+        </form>
+    </div>
 
-        <script src="https://js.arcgis.com/3.18/"></script>
-        <script src="scripts/app.js"></script>
+
+    <script src="https://js.arcgis.com/3.18/"></script>
+    <script src="scripts/app.js"></script>
     </body>
 </html>
