@@ -253,19 +253,29 @@ function addIcons(parentDiv){
 };
 
 function updateSidePanel(serverOutput) {
-    updateEvent(serverOutput.events);
-    updateOptions(serverOutput.options);
+    
 
     var curPlayer;
     var players = serverOutput.players;
+    var playerIndex = 0;
     for(var i = 0; i < players.length; i++) {
         if(players[i].uid == UID) {
             curPlayer = players[i];
+            playerIndex = i;
         }
     }
-
     updatePlayerStats(curPlayer);
-}
+
+    if(typeof(serverOutput.options[0]) != 'undefined')
+        updateOptions(serverOutput.options[playerIndex]);
+    else
+        updateOptions(serverOutput.options);    
+    
+    if(typeof(serverOutput.events[0] != 'undefined'))
+        updateEvent(serverOutput.events[playerIndex]);
+    else
+        updateEvent(serverOutput.events);
+};
 
 function updateEvent(events) {
     var eventText = document.getElementById("eventText");
@@ -276,7 +286,7 @@ function updateEvent(events) {
     }
 
     //TODO: update size?
-}
+};
 
 function updateOptions(options) {
     var optionList = document.getElementById("playerOptions");
@@ -298,6 +308,7 @@ function updateOptions(options) {
        curListItem.appendChild(curButton);
        curListItem.appendChild(curLabel);
        optionList.appendChild(curListItem);
+       
     };
 };
 
