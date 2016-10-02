@@ -9,21 +9,17 @@ import copy
 
 def get_route(start, end):
     url = "http://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve"
-    stops = '%f,%f;%f,%f' % (start['x'], start['y'], start['x']+0.5, start['y']+0.5)
-    print(stops)
+    stops = '%f,%f;%f,%f' % (start['x'], start['y'], end['x'], end['y'])
     params = {
         'f': 'json',
         'token': token,
         'stops': stops
     }
     resp = requests.get(url, params=params)
-    print('getting route')
     data = resp.json()
-    print(data)
     if data.get('error'):
         return None
-    print(data['routes']['features'][0]['geometry']['paths'])
-    return data['routes']['features'][0]['geometry']['paths']
+    return data['routes']['features'][0]['geometry']['paths'][0]
 
 
 def gen_random_position(x_bounds, y_bounds):
@@ -118,7 +114,7 @@ class Game:
             route = get_route(player['position'], choice['target'])
             player['route'] = route
             # TODO calculate distance traveled
-            player['position'] = {'x': route[-1][0], 'y': route[-1][0]}
+            player['position'] = {'x': route[-1][0], 'y': route[-1][1]}
         # Do api calls determine what each person so do next
         # Update all player positions
         self.player_choices = []
@@ -138,12 +134,14 @@ class Game:
         # check if user has already checked their state if not say they are ready
         return self.player_read_state[[p['uid'] for p in self.players].index(uid)]
 
-    def get_state(self):
+    def get_state(self, uid):
         """ /gamenext
 
         """
         if len(self.players) != self.MAX_PLAYERS:
             return None
+
+        self.player_read_state[[p['uid'] for p in self.players].index(uid)] = False
 
         return {
             "players": self.players,
