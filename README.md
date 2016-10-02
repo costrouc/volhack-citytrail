@@ -1,7 +1,7 @@
 # City Trail
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/costrouc/volhack-citytrail/gh-pages/static/screenshots/demo-2.png">
+  <img src="https://github.com/costrouc/volhack-citytrail/raw/master/img/app-screenshot.png">
 </p>
 
 Uses:
