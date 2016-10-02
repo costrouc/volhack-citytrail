@@ -41,6 +41,7 @@ require([
             webMercatorUtils) {
 
     var drawPlayers = function(map, gl, players) {
+            debugger;
         players.forEach(function(player) {
             var point = new Point(player.position.x,
                                   player.position.y,
@@ -85,7 +86,6 @@ require([
         map.on('click', function(e) {
             USER_SELECTION.uid = UID;
             USER_SELECTION.position = webMercatorUtils.webMercatorToGeographic(e.mapPoint);
-            debugger;
 
             console.log('User Select Target Location');
             console.log('Position: ', USER_SELECTION.position);
@@ -93,7 +93,7 @@ require([
         });
 
         var tileLayer = new VectorTileLayer("/data/basemap-theme.json");
-        var gl = new gl();
+        var gl = new GraphicsLayer();
         map.addLayer(tileLayer);
         map.addLayer(gl);
 
@@ -140,8 +140,6 @@ document.getElementById("playerInput").onsubmit = function(){
 //Handle getting player icons
 window.onload = function(){
     addIcons(document.getElementById("newUserIcons"));
-    updateTimer = setInterval(checkForUpdate, 1000);
-    updateSidePanel(mock_server_output["options"], mock_server_output["events"], mock_server_output["players"][0]);
 };
 
 
@@ -178,6 +176,18 @@ function sendPlayer(username, playerIcon)
     var request = new XMLHttpRequest();
     request.open('POST', '/signup', true);
     request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    request.onreadystatechange = function() {
+        if (request.readyState == XMLHttpRequest.DONE)
+        {
+                var response = JSON.parse(request.responseText);
+                if(response.uid)
+                {        
+                        UID = "asdf"//response.uid;
+                        updateTimer = setInterval(checkForUpdate, 1000);
+                }
+        }
+
+    }
     request.send(JSON.stringify(userInfo));
 }
 
@@ -185,7 +195,16 @@ function updateSidePanel(options, events, player)
 {
     updateEvent(events);
     updateOptions(options);
-    updatePlayerStats(player);
+    var curPlayer;
+    for(var i = 0; i < player.length; i++)
+    {
+            if(player[i].uid == UID)
+            {
+                    curPlayer = player[i];
+            }
+    }
+    
+    updatePlayerStats(curPlayer);
 }
 
 function updateEvent(events)
@@ -205,7 +224,7 @@ function updateOptions(options)
     var optionList = document.getElementById("playerOptions");
     while(optionList.firstChild)
     {
-        optionList.removeChild(optionDiv.firstChild);
+        optionList.removeChild(optionList.firstChild);
     }
     for(var i = 0; i < options.length; ++i)
     {
@@ -238,7 +257,7 @@ function updatePlayerStats(player)
 function checkForUpdate()
 {
     var request = new XMLHttpRequest();
-    request.open('GET', '/gameupdate', true);
+    request.open('GET', '/gameready', true);
 
     request.onload = function() {
         if (request.status >= 200 && request.status < 400) {
