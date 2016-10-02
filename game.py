@@ -1,27 +1,109 @@
 import random
+import uuid
+import copy
 
-LOCATION_TYPES = ['CAR', 'BIKE', 'EXIT']
-X_BOUNDS = [-100.0, 100.0]
-Y_BOUNDS = [-50.0, 50.0]
+def gen_random_position(x_bounds, y_bounds):
+    return {
+        "x": random.random() * (x_bounds[1] - x_bounds[0]) + x_bounds[0],
+        "y": random.random() * (y_bounds[1] - y_bounds[0]) + y_bounds[0]
+    }
 
 
-def add_user(user):
-    pass
+class Game:
+    MAX_PLAYERS = 1
+    MAX_LOCATIONS = 5
 
+    LOCATION_TYPES = ['CAR', 'BIKE', 'EXIT']
+    X_BOUNDS = [-100.0, 100.0]
+    Y_BOUNDS = [-50.0, 50.0]
 
-def new_game(num_players=3, num_locations=5):
-    players = []
-    for i in range(num_players):
-        players.append({
-            "position": {
-                "x": random.random() * (X_BOUNDS[1] - X_BOUNDS[0]) + X_BOUNDS[0],
-                "y": random.random() * (Y_BOUNDS[1] - Y_BOUNDS[0]) + Y_BOUNDS[0]
-            }
+    def __init__(self):
+        self.players = []
+        self.locations = []
+        self.player_choices = []
+        self.player_read_state = [False for i in range(self.MAX_PLAYERS)]
+        self.init_locations()
+
+    def init_locations(self):
+        for i in range(self.MAX_LOCATIONS):
+            location_type = random.choice(self.LOCATION_TYPES[:-1])
+            type_index = self.LOCATION_TYPES.index(location_type) + 1
+            self.locations.append({
+                'position': gen_random_position(self.X_BOUNDS, self.Y_BOUNDS),
+                'type': location_type,
+                'image': '/data/icons/location' + str(type_index) + '.png'
+            })
+        self.locations.append({
+            'position': gen_random_position(self.X_BOUNDS, self.Y_BOUNDS),
+            'type': self.LOCATION_TYPES[-1],
+            'image': '/data/icons/destination.png'
         })
 
-    return {
-        'players': [None for i in range(num_players)]
-    }
+    def reset(self):
+        self.players = []
+
+    def add_player(self, user):
+        """ /signup
+
+        """
+        if len(self.players) == self.MAX_PLAYERS:
+            return None
+
+        user.update({
+            'uid': str(uuid.uuid4()),
+            'position': gen_random_position(self.X_BOUNDS, self.Y_BOUNDS),
+            'image': '/data/icons/player' + str(user['icon']) + '.png',
+            'transportation': 'WALK',
+            'path': None
+        })
+
+        self.players.append(copy.deepcopy(user))
+        return user
+
+    def submit_player_action(self, choice):
+        # Check if player has already submitted
+        if choice['uid'] in [c['uid'] for c in self.player_choices]:
+            return None
+
+        self.player_choices.append(choice)
+
+        # Do if all the players have submitted actions
+        if len(self.player_choices) == self.MAX_PLAYERS:
+            self.calculate_next_step()
+
+    def calculate_next_step(self):
+        # Do api calls determine what each person so do next
+        # Update all player positions
+        self.player_choices = []
+        self.player_read_state = [True for i in range(self.MAX_PLAYERS)]
+
+    def get_player_options(self, uid):
+        return ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"]
+
+    def get_player_events(self, uid):
+        return ["You got Polio!", "You won..."]
+
+    def next_state_ready(self, uid):
+        # if not all user have submited next step is not ready
+        if len(self.player_choices) == self.MAX_PLAYERS:
+            return False
+
+        # check if user has already checked their state if not say they are ready
+        return self.player_read_state[[p['uid'] for p in self.players].index(uid)]
+
+    def get_state(self):
+        """ /gamenext
+
+        """
+        if len(self.players) != self.MAX_PLAYERS:
+            return None
+
+        return {
+            "players": self.players,
+            "locations": self.locations,
+            "options": [self.get_player_options(player['uid']) for player in self.players],
+            "events": [self.get_player_events(player['uid']) for player in self.players]
+        }
 
 
 mock_server_output = {
@@ -93,7 +175,7 @@ mock_server_output = {
         "Option 1", "Option 2", "Option 3", "Option 4", "Option 5"
     ],
     "events": [
-        "You got Polio!", "You won..."
+
     ],
     "paths": [None, None, None, None, None]
 }
