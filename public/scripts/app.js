@@ -21,9 +21,12 @@ var USER_SELECTION = {
     uid: null
 };
 
-var updateTimer = null;
-var mainMap = null;
-var graphicsLayer = null;
+var MAIN_MAP = null;
+var GRAPHICS_LAYER = null;
+var NEEDS_UPDATE = false;
+var STATE_OUTPUT = null;
+
+
 
 require([
     "esri/map",
@@ -99,12 +102,58 @@ require([
 
         
         
-        mainMap = map;
-        graphicsLayer = gl;
+        MAIN_MAP = map;
+        GRAPHICS_LAYER = gl;
         //renderScene(map, graphicsLayer, mock_server_output);
     };
 
+    function checkForUpdate()
+    {
+        var request = new XMLHttpRequest();
+        request.open('POST', '/gameready', true);
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        request.onreadystatechange = function() {
+            if (request.readyState == XMLHttpRequest.DONE)
+            {
+                var response = JSON.parse(request.responseText);
+                if(response.status == true)
+                {
+                    getUpdate();        
+                }
+            }
+
+        }
+        request.send(JSON.stringify(UID));
+
+    }   
+
+    function getUpdate()
+    {
+        var request = new XMLHttpRequest();
+        request.open('GET', '/gamenext', true);
+
+        request.onload = function() {
+            if (request.status >= 200 && request.status < 400) {
+                // Success!
+                var data = JSON.parse(request.responseText);
+                STATE_OUTPUT = data;
+                NEEDS_UPDATE = true;
+                renderScene(MAIN_MAP, GRAPHICS_LAYER, data);
+            } else {scripts/app.js
+            // We reached our target server, but it returned an error
+
+            }
+        };
+
+        request.onerror = function() {
+        // There was a connection error of some sort
+        };
+
+        request.send();
+    }
+
     initMap([15, 65], 4);
+    setInterval(checkForUpdate,1000);
 });
 
 
@@ -140,6 +189,7 @@ document.getElementById("playerInput").onsubmit = function(){
 //Handle getting player icons
 window.onload = function(){
     addIcons(document.getElementById("newUserIcons"));
+    setInterval(gameUpdate, 1000);
 };
 
 
@@ -183,7 +233,6 @@ function sendPlayer(username, playerIcon)
                 if(response.uid)
                 {        
                         UID = "asdf"//response.uid;
-                        updateTimer = setInterval(checkForUpdate, 1000);
                 }
         }
 
@@ -254,58 +303,11 @@ function updatePlayerStats(player)
     movement.innerHTML = "movement: " + player.transportation.toLowerCase();
 }
 
-function checkForUpdate()
+
+function gameUpdate()
 {
-    var request = new XMLHttpRequest();
-    request.open('GET', '/gameready', true);
-
-    request.onload = function() {
-        if (request.status >= 200 && request.status < 400) {
-            // Success!
-            var data = JSON.parse(request.responseText);
-            if(data.status)
-            {
-                clearInterval(updateTimer);
-                getUpdate();
-            }
-        } else {
-        // We reached our target server, but it returned an error
-
-        }
-    };
-
-    request.onerror = function() {
-    // There was a conne:wction error of some sort
-    };
-
-    request.send();
-}
-
-function getUpdate()
-{
-    var request = new XMLHttpRequest();
-    request.open('GET', '/gamenext', true);
-
-    request.onload = function() {
-        if (request.status >= 200 && request.status < 400) {
-            // Success!
-            var data = JSON.parse(request.responseText);
-            gameUpdate(data);
-        } else {
-        // We reached our target server, but it returned an error
-
-        }
-    };
-
-    request.onerror = function() {
-    // There was a connection error of some sort
-    };
-
-    request.send();
-}
-
-function gameUpdate(serverOutput)
-{
-    updateSidePanel(serverOutput['options'], serverOutput['events'], serverOutput['players']);
-    renderScene(mainMap, graphicsLayer, serverOutput);
+    if(NEEDS_UPDATE)
+    {
+        updateSidePanel(SERVER_OUTPUT['options'], SERVER_OUTPUT['events'], SERVER_OUTPUT['players']);
+    }
 }
