@@ -1,22 +1,21 @@
 from flask import Flask, send_from_directory, request, jsonify, session
-import uuid
 
-import game
+from game import Game
 
 app = Flask(__name__)
 app.secret_key = 'qwe3dsdoasdfin4n4jdj'
 
 static_path = 'public'
 
+game = Game()
 
 @app.route('/signup', methods =['POST'])
 def signup_view():
-    user = request.json
-    user.update({'uid': str(uuid.uuid4())})
-    game.add_user(user)
+    user = game.add_player(request.json)
     session['user'] = user
     print(user)
     return jsonify(user)
+
 
 @app.route('/gamesubmit', methods=['POST'])
 def gamesubmit_view():
@@ -27,14 +26,17 @@ def gamesubmit_view():
 
 @app.route('/gamenext')
 def gamenext_view():
-    return jsonify(game.mock_server_output)
+    state = game.get_state()
+    if state:
+        return jsonify(state)
+    return jsonify({'status': 'not ready'})
 
 
-@app.route('/gameready')
+@app.route('/gameready', methods=['POST'])
 def gameupdate_view():
     # Update view with u
-    return jsonify({"status": True})
-
+    uid = request.json['uid']
+    return jsonify({"status": game.next_state_ready(uid)})
 
 
 # Hack for static hosting
