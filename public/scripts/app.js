@@ -21,6 +21,12 @@ var USER_SELECTION = {
     uid: null
 };
 
+var NEEDS_UPDATE = false;
+var STATE_OUTPUT = null;
+var USER_CREATED = false;
+var MAP = null;
+
+var QUIT = true;
 
 require([
     "esri/map",
@@ -29,13 +35,13 @@ require([
     "esri/graphic", "esri/layers/GraphicsLayer",
     "esri/geometry/Point", "esri/symbols/PictureMarkerSymbol",
     "esri/geometry/webMercatorUtils",
-    "dojo/domReady!"
+    "dojo/domReady!", "esri/process/Processor"
 ], function(Map,
             InfoTemplate,
             VectorTileLayer,
             Graphic, GraphicsLayer,
             Point, PictureMarkerSymbol,
-            webMercatorUtils) {
+            webMercatorUtils, Processor) {
 
     var drawPlayers = function(map, gl, players) {
         players.forEach(function(player) {
@@ -67,10 +73,14 @@ require([
         });
     };
 
-    var renderScene = function(map, gl, serverOutput) {
-        //TODO: reset graphics
-        drawPlayers(map, gl, serverOutput.players);
-        drawLocations(map, gl, serverOutput.locations);
+    var renderScene = function(serverOutput) {
+        //if(MAP.getLayer("graphicsLayer") != null)
+        //    MAP.removeLayer(MAP.getLayer("graphicsLayer"));
+        var gl = new GraphicsLayer({id:"graphicsLayer"});
+
+        MAP.addLayer(gl);
+        drawPlayers(MAP, gl, serverOutput.players);
+        drawLocations(MAP, gl, serverOutput.locations);
     };
 
     var initMap = function(center, zoom) {
@@ -89,12 +99,66 @@ require([
         });
 
         var tileLayer = new VectorTileLayer("/data/basemap-theme.json");
-        var graphicsLayer = new GraphicsLayer();
         map.addLayer(tileLayer);
-        map.addLayer(graphicsLayer);
+MAP = map;
+
     };
 
+
+    function checkForUpdate()
+    {
+        if(USER_CREATED && QUIT)
+        {
+            var request = new XMLHttpRequest();
+            request.open('POST', '/gameready', true);
+            request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            request.onreadystatechange = function() {
+                if (request.readyState == XMLHttpRequest.DONE)
+                {
+                    var response = JSON.parse(request.responseText);
+                    if(response.status == true)
+                    {
+                        getUpdate();
+                    }
+                }
+
+            }
+            var uid = {
+                    uid: UID
+            };
+
+            request.send(JSON.stringify(uid));
+            QUIT = false;
+        }
+    }   
+
+    function getUpdate()
+    {
+        var request = new XMLHttpRequest();
+        request.open('GET', '/gamenext', true);
+
+        request.onload = function() {
+            if (request.status >= 200 && request.status < 400) {
+                // Success!
+                var data = JSON.parse(request.responseText);
+                STATE_OUTPUT = data;
+                NEEDS_UPDATE = true;
+        renderScene(STATE_OUTPUT);
+            } else {scripts/app.js
+            // We reached our target server, but it returned an error
+
+            }
+        };
+
+        request.onerror = function() {
+        // There was a connection error of some sort
+        };
+
+        request.send();
+    }
+
     initMap([15, 65], 4);
+    setInterval(checkForUpdate,10000);
 });
 
 
@@ -130,8 +194,10 @@ document.getElementById("playerInput").onsubmit = function(){
 //Handle getting player icons
 window.onload = function(){
     addIcons(document.getElementById("newUserIcons"));
-    updateSidePanel(mock_server_output["options"], mock_server_output["events"], mock_server_output["players"][0]);
+    setInterval(gameUpdate, 1000);
 };
+
+
 
 function addIcons(parentDiv){
     //TODO: Replace this with actual icon loading
@@ -142,7 +208,7 @@ function addIcons(parentDiv){
         var curRadio = document.createElement("input");
         curRadio.setAttribute("type", "radio");
         curRadio.setAttribute("name", "Icons");
-        curRadio.setAttribute("value", "player" + (i + 1));
+        curRadio.setAttribute("value", i + 1);
         var curImage = document.createElement("img");
         curImage.setAttribute("src", icons[i]);
         curNode.appendChild(curRadio);
@@ -165,6 +231,18 @@ function sendPlayer(username, playerIcon)
     var request = new XMLHttpRequest();
     request.open('POST', '/signup', true);
     request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    request.onreadystatechange = function() {
+        if (request.readyState == XMLHttpRequest.DONE)
+        {
+                var response = JSON.parse(request.responseText);
+                if(response.uid)
+                {
+                        UID = response.uid;
+                        USER_CREATED = true;
+                }
+        }
+
+    }
     request.send(JSON.stringify(userInfo));
 }
 
@@ -172,7 +250,16 @@ function updateSidePanel(options, events, player)
 {
     updateEvent(events);
     updateOptions(options);
-    updatePlayerStats(player);
+    var curPlayer;
+    for(var i = 0; i < player.length; i++)
+    {
+            if(player[i].uid == UID)
+            {
+                    curPlayer = player[i];
+            }
+    }
+    
+    updatePlayerStats(curPlayer);
 }
 
 function updateEvent(events)
@@ -192,7 +279,7 @@ function updateOptions(options)
     var optionList = document.getElementById("playerOptions");
     while(optionList.firstChild)
     {
-        optionList.removeChild(optionDiv.firstChild);
+        optionList.removeChild(optionList.firstChild);
     }
     for(var i = 0; i < options.length; ++i)
     {
@@ -220,4 +307,13 @@ function updatePlayerStats(player)
 
     var movement = document.getElementById("movement");
     movement.innerHTML = "movement: " + player.transportation.toLowerCase();
+}
+
+
+function gameUpdate()
+{
+    if(NEEDS_UPDATE)
+    {
+        updateSidePanel(STATE_OUTPUT['options'], STATE_OUTPUT['events'], STATE_OUTPUT['players']);
+    }
 }
