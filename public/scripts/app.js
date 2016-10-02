@@ -130,7 +130,7 @@ MAP = map;
             request.send(JSON.stringify(uid));
             QUIT = false;
         }
-    }   
+    }
 
     function getUpdate()
     {
@@ -157,7 +157,7 @@ MAP = map;
         request.send();
     }
 
-    initMap([15, 65], 4);
+    initMap([-85.0, 35], 8);
     setInterval(checkForUpdate,10000);
 });
 
@@ -258,7 +258,7 @@ function updateSidePanel(options, events, player)
                     curPlayer = player[i];
             }
     }
-    
+
     updatePlayerStats(curPlayer);
 }
 
