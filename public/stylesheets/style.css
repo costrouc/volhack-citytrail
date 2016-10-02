@@ -6,6 +6,24 @@ html, body {
   position: relative;
 }
 
+p,a,li, button, label, input, h2,h3,h4{
+    font-family: 'Roboto Condensed', sans-serif;
+
+}
+
+.main-logo{
+    background-color: #babae8;
+    font-family: 'Amatic SC', cursive;
+    margin: 0px;
+    padding: 15px;
+    text-align: center;
+}
+
+.main-logo .glyphicon{
+    margin-left: 10px;
+    font-size: 30px;
+}
+
 #mapView {
   position: fixed;
   top: 0;
@@ -15,6 +33,9 @@ html, body {
 }
 
 #sidePanel {
+-webkit-box-shadow: inset 3px 0px 81px -23px rgba(0,0,0,0.75);
+-moz-box-shadow: inset 3px 0px 81px -23px rgba(0,0,0,0.75);
+box-shadow: inset 3px 0px 81px -23px rgba(0,0,0,0.75);
   position: fixed;
   top: 0;
   left: 80vw;
@@ -22,6 +43,9 @@ html, body {
   width: 20vw;
 }
 
+.sidePanelInput{
+    padding: 15px;
+}
 
 .modal {
     position: fixed;
@@ -107,10 +131,37 @@ label > input{ /* hide radio button*/
 label > input + img{ /* image style for icons*/
     cursor:pointer;
     border:2px solid transparent;
-    height: 150px;
-    width: 150px;
+    height: 100px;
+    width: 100px;
 }
 
 label > input:checked + img{ /*radio checked imaged style*/
     border:2px solid #f00;
 }
+
+#newUserIcons{
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;    
+}
+
+@media screen and (max-width: 900px) {
+    #sidePanel {
+        height: 20vh;
+        position: static;
+        top: 0;
+        width: 100vw;
+    }
+
+    .main-logo{
+        float: right;
+        height: 20vh;
+    }
+
+    #mapView {
+        position: fixed;
+        top: 20vh;
+        height: 80vh;
+        width: 100vw;
+    }
+} 

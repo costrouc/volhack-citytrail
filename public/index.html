@@ -1,49 +1,103 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
 
-        <title>Volhacks</title>
-        <meta name="description" content="">
-        <meta name="author" content="Volhacks">
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
-        <link rel="stylesheet" href="stylesheets/style.css">
+<head>
+    <meta charset="utf-8">
 
-        <link rel="stylesheet" href="https://js.arcgis.com/3.18/esri/css/esri.css">
-    </head>
-    <body>
+    <title>City Trails</title>
+    <meta name="description" content="">
+    <meta name="author" content="Volhacks">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.18/esri/css/esri.css">
 
-    <div id="newUserModal" class="modal">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+        crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <!--<div id="newUserModal" class="modal">
         <div class="modalcontent">
             <form id="newUserForm">
-                <input type="text" name="Username" placeholder="username"\> </br>
+                <input type="text" name="Username" placeholder="username" \> </br>
                 <p>Select Icon:</p>
-                <div id=newUserIcons></div> </br>
-                <input type="submit" value="submit"\>
+                <div id=newUserIcons></div>
+                </br>
+                <input type="submit" value="submit" \>
             </form>
         </div>
+    </div>-->
+
+    <div id="newUserModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">New User</h4>
+                </div>
+                <form id="newUserForm">
+                    <div class="modal-body">
+                        <label>Username</label>
+                        <input type="text" name="Username" placeholder="Username" \> </br>
+                        <label>Select Icon:</label><br>
+                        <div id=newUserIcons></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" onclick="hideModal()" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div>
+    <!-- /.modal -->
 
     <div id="mapView"></div>
 
     <div id="sidePanel">
-        <div id="eventData">
-            <p id="eventText">Events</p>
+        <h1 class="main-logo">City Trails<span class="glyphicon glyphicon-road" aria-hidden="true"></span></h1>
+        <div class="sidePanelInput">
+            <div id="eventData">
+                <p id="eventText">Events</p>
+            </div>
+            <div id="playerStats">
+                <p id="user">User</p>
+                <p id="movement">Walking</p>
+            </div>
+            <form id="playerInput">
+                <p>Select Option:</p>
+                <ul id="playerOptions" class="options"></ul>
+                <input class="btn btn-primary" type="submit" value="Submit" \>
+            </form>
         </div>
-        <div id="playerStats">
-            <p id="user">User</p>
-            <p id="movement">Walking</p>
-        </div>
-        <form id = "playerInput">
-            <p>Select Option:</p>
-            <ul id="playerOptions" class = "options"></ul>
-            <input type="submit" value="submit"\>
-        </form>
     </div>
+
 
 
     <script src="https://js.arcgis.com/3.18/"></script>
 
     <script src="scripts/app.js"></script>
-    </body>
+</body>
+<script type="text/javascript">
+$(window).on('load', function() { $('#newUserModal').modal('show'); });
+function hideModal(){ $('#newUserModal').modal('hide');}
+</script>
+
 </html>
