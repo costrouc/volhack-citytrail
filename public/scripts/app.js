@@ -25,7 +25,6 @@ var NEEDS_UPDATE = false;
 var STATE_OUTPUT = null;
 var USER_CREATED = false;
 var MAP = null;
-var GRAPHICS_LAYER = null;
 
 
 var postSignUp = function(username, icon) {
@@ -134,12 +133,13 @@ require([
     };
 
     window.renderScene = function() {
-        //if(MAP.getLayer("graphicsLayer") != null)
-        //    MAP.removeLayer(MAP.getLayer("graphicsLayer"));
-        // var gl = new GraphicsLayer({id:"graphicsLayer"});
+        if(MAP.getLayer("graphicsLayer") != null)
+            MAP.removeLayer(MAP.getLayer("graphicsLayer"));
+        var gl = new GraphicsLayer({id: "graphicsLayer"});
+        MAP.addLayer(gl);
 
-        drawPlayers(MAP, GRAPHICS_LAYER, STATE_OUTPUT.players);
-        drawLocations(MAP, GRAPHICS_LAYER, STATE_OUTPUT.locations);
+        drawPlayers(MAP, gl, STATE_OUTPUT.players);
+        drawLocations(MAP, gl, STATE_OUTPUT.locations);
     };
 
     var initMap = function(center, zoom) {
@@ -157,13 +157,9 @@ require([
             console.log('uid: ', USER_SELECTION.uid);
         });
 
-        var gl = new GraphicsLayer();
         var tileLayer = new VectorTileLayer("/data/basemap-theme.json");
-
         map.addLayer(tileLayer);
-        map.addLayer(gl);
         MAP = map;
-        GRAPHICS_LAYER = gl;
     };
 
 
@@ -178,7 +174,7 @@ require([
     };
 
     initMap([-85.0, 35.0], 8);
-    setInterval(checkForUpdate, 2000);
+    setInterval(checkForUpdate, 5000);
 });
 
 
