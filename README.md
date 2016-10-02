@@ -16,7 +16,7 @@ Uses:
 ## How do we use ARCGIS
  - Custom Mapping (We created our own Vector Theme)
  - Graphical Layer by drawing images and paths on map.
- - Route Finding and we limit path by current mode of travel
+ - Route Finding and we limit path by current mode of travel (WALK, BIKE, CAR)
 
 <p align="center">
   <img src="https://github.com/costrouc/volhack-citytrail/raw/master/img/app-screenshot1.png">
