@@ -1,6 +1,30 @@
+from config import token
+
+import requests
+
 import random
 import uuid
 import copy
+
+
+def get_route(start, end):
+    url = "http://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World/solve"
+    stops = '%f,%f;%f,%f' % (start['x'], start['y'], start['x']+0.5, start['y']+0.5)
+    print(stops)
+    params = {
+        'f': 'json',
+        'token': token,
+        'stops': stops
+    }
+    resp = requests.get(url, params=params)
+    print('getting route')
+    data = resp.json()
+    print(data)
+    if data.get('error'):
+        return None
+    print(data['routes']['features'][0]['geometry']['paths'])
+    return data['routes']['features'][0]['geometry']['paths']
+
 
 def gen_random_position(x_bounds, y_bounds):
     return {
@@ -15,8 +39,8 @@ class Game:
     NAMES = ['Max', 'Bob', 'Scott', 'Mike', 'Chris', 'Arnold']
 
     LOCATION_TYPES = ['CAR', 'BIKE', 'EXIT']
-    X_BOUNDS = [-100.0, 100.0]
-    Y_BOUNDS = [-50.0, 50.0]
+    X_BOUNDS = [-84.35, -83.52]
+    Y_BOUNDS = [34.32, 35.78]
 
     def __init__(self):
         self.players = []
@@ -65,6 +89,7 @@ class Game:
         })
 
         self.players.append(copy.deepcopy(user))
+        print(self.players)
         return user
 
     def submit_player_action(self, choice):
@@ -73,12 +98,27 @@ class Game:
             return None
 
         self.player_choices.append(choice)
+        print(self.player_choices)
 
         # Do if all the players have submitted actions
         if len(self.player_choices) == self.MAX_PLAYERS:
             self.calculate_next_step()
 
+    def get_player(self, uid):
+        print('getting player')
+        for player in self.players:
+            if player['uid'] == uid:
+                return player
+        return None
+
     def calculate_next_step(self):
+        print('calculating next steps')
+        for choice in self.player_choices:
+            player = self.get_player(choice['uid'])
+            route = get_route(player['position'], choice['target'])
+            player['route'] = route
+            # TODO calculate distance traveled
+            player['position'] = {'x': route[-1][0], 'y': route[-1][0]}
         # Do api calls determine what each person so do next
         # Update all player positions
         self.player_choices = []
@@ -92,7 +132,7 @@ class Game:
 
     def next_state_ready(self, uid):
         # if not all user have submited next step is not ready
-        if len(self.player_choices) == self.MAX_PLAYERS:
+        if len(self.players) != self.MAX_PLAYERS:
             return False
 
         # check if user has already checked their state if not say they are ready

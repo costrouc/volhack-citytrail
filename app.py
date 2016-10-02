@@ -19,8 +19,8 @@ def signup_view():
 
 @app.route('/gamesubmit', methods=['POST'])
 def gamesubmit_view():
-    user_action = request.json
-    print(user_action)
+    choice = request.json
+    game.submit_player_action(choice)
     return jsonify({"recieved": True})
 
 
