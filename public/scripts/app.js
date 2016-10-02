@@ -2,6 +2,7 @@
 
 // Global Settings
 var LOCATION_TYPES = ["CAR", "BIKE", "EXIT"];
+var COLORS = ['#6699FF', '#FFCC00', '#99CC33', '#BFBFBF', '#CC0000'];
 var PLAYER_SIZE = 30; // px
 var LOCATION_SIZE = 40; // px
 var PLAYER_TEMPLATE = {
@@ -89,18 +90,22 @@ var postGameNext = function() {
 
 require([
     "esri/map",
+    "esri/Color",
     "esri/InfoTemplate",
     "esri/layers/VectorTileLayer",
     "esri/graphic", "esri/layers/GraphicsLayer",
     "esri/geometry/Point", "esri/symbols/PictureMarkerSymbol",
+    "esri/geometry/Polyline", "esri/symbols/SimpleLineSymbol",
     "esri/geometry/webMercatorUtils",
     "esri/process/Processor",
     "dojo/domReady!"
 ], function(Map,
+            Color,
             InfoTemplate,
             VectorTileLayer,
             Graphic, GraphicsLayer,
             Point, PictureMarkerSymbol,
+            Polyline, SimpleLineSymbol,
             webMercatorUtils,
             Processor) {
 
@@ -116,6 +121,17 @@ require([
             };
             var graphic = new Graphic(point, symbol, attr, info);
             gl.add(graphic);
+
+            if (player.route) {
+                var lines = new Polyline(player.route);
+                symbol = new SimpleLineSymbol(
+                    SimpleLineSymbol.STYLE_SOLID,
+                    new Color(COLORS[player.icon-1]),
+                    3
+                );
+                graphic = new Graphic(lines, symbol);
+                gl.add(graphic);
+            }
         });
     };
 
@@ -174,7 +190,7 @@ require([
     };
 
     initMap([-85.0, 35.0], 8);
-    setInterval(checkForUpdate, 5000);
+    setInterval(checkForUpdate, 1500);
 });
 
 
@@ -215,7 +231,6 @@ window.onload = function(){
 };
 
 function addIcons(parentDiv){
-    //TODO: Replace this with actual icon loading
     var icons = [
         "data/icons/player1.png",
         "data/icons/player2.png",
