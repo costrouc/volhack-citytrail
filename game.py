@@ -1,4 +1,8 @@
-from config import token
+try:
+    from config import token
+except ImportError:
+    print('Config requirs ARCGIS account app setup for server to run!!!')
+    raise
 
 import requests
 
