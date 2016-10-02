@@ -19,14 +19,15 @@ def signup_view():
 
 @app.route('/gamesubmit', methods=['POST'])
 def gamesubmit_view():
-    user_action = request.json
-    print(user_action)
+    choice = request.json
+    game.submit_player_action(choice)
     return jsonify({"recieved": True})
 
 
-@app.route('/gamenext')
+@app.route('/gamenext', methods=['POST'])
 def gamenext_view():
-    state = game.get_state()
+    uid = request.json['uid']
+    state = game.get_state(uid)
     if state:
         return jsonify(state)
     return jsonify({'status': 'not ready'})
