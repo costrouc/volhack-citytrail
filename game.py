@@ -6,6 +6,7 @@ except ImportError:
 
 import requests
 
+from math import sqrt
 import random
 import uuid
 import copy
@@ -34,11 +35,13 @@ def gen_random_position(x_bounds, y_bounds):
 
 
 class Game:
-    MAX_PLAYERS = 1
+    UNIT_CONVERSION = 1.0/95.0
+    MAX_PLAYERS = 2
     MAX_LOCATIONS = 5
     NAMES = ['Max', 'Bob', 'Scott', 'Mike', 'Chris', 'Arnold']
 
     LOCATION_TYPES = ['CAR', 'BIKE', 'EXIT']
+    SPEEDS = {'WALK': 10.0, 'BIKE': 20.0, 'CAR': 60.0}
     X_BOUNDS = [-84.35, -83.52]
     Y_BOUNDS = [34.32, 35.78]
 
@@ -89,7 +92,10 @@ class Game:
         })
 
         self.players.append(copy.deepcopy(user))
-        print(self.players)
+
+        if len(self.players) == self.MAX_PLAYERS:
+            self.player_read_state = [True for i in range(self.MAX_PLAYERS)]
+
         return user
 
     def submit_player_action(self, choice):
@@ -116,13 +122,24 @@ class Game:
         for choice in self.player_choices:
             player = self.get_player(choice['uid'])
             route = get_route(player['position'], choice['target'])
-            player['route'] = route
+            cliped_route = self.clip_route(self.SPEEDS[player['transportation']], route)
+            player['route'] = cliped_route
             # TODO calculate distance traveled
-            player['position'] = {'x': route[-1][0], 'y': route[-1][1]}
+            player['position'] = {'x': cliped_route[-1][0], 'y': cliped_route[-1][1]}
         # Do api calls determine what each person so do next
         # Update all player positions
         self.player_choices = []
         self.player_read_state = [True for i in range(self.MAX_PLAYERS)]
+
+    def clip_route(self, max_dist, route):
+        dist = 0.0
+        scaled_max_dist = max_dist * self.UNIT_CONVERSION
+        cdist = lambda p1, p2: sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+        for i in range(1, len(route)):
+            dist += cdist(route[i-1], route[i])
+            if dist > scaled_max_dist:
+                return route[:i]
+        return route
 
     def get_player_options(self, uid):
         return ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"]

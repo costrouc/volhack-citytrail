@@ -78,13 +78,13 @@
                 <p id="eventText">Events</p>
             </div>
             <div id="playerStats">
-                <p id="user">User</p>
-                <p id="movement">Walking</p>
+                <p>User: <span id="user"></span></p>
+                <p>Movement: <span id="movement"></span></p>
             </div>
             <form id="playerInput">
                 <p>Select Option:</p>
                 <ul id="playerOptions" class="options"></ul>
-                <input class="btn btn-primary" type="submit" value="Submit" \>
+                <input id="playerInputButton" class="btn btn-primary" type="submit" value="Submit" \>
             </form>
         </div>
     </div>
@@ -96,8 +96,8 @@
     <script src="scripts/app.js"></script>
 </body>
 <script type="text/javascript">
-$(window).on('load', function() { 
-    $('#newUserModal').modal('show'); 
+$(window).on('load', function() {
+    $('#newUserModal').modal('show');
 });
 
 function hideModal(){ $('#newUserModal').modal('hide');}
