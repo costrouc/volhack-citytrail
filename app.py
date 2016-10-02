@@ -52,4 +52,4 @@ def static_assets(path):
     return send_from_directory(static_path, request.path[1:]) # hack
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    app.run(debug=False, port=8000, hostname="0.0.0.0")
