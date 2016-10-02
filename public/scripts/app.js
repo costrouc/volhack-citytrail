@@ -25,7 +25,7 @@ var MAIN_MAP = null;
 var GRAPHICS_LAYER = null;
 var NEEDS_UPDATE = false;
 var STATE_OUTPUT = null;
-
+var USER_CREATED = false;
 
 
 require([
@@ -109,22 +109,24 @@ require([
 
     function checkForUpdate()
     {
-        var request = new XMLHttpRequest();
-        request.open('POST', '/gameready', true);
-        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-        request.onreadystatechange = function() {
-            if (request.readyState == XMLHttpRequest.DONE)
-            {
-                var response = JSON.parse(request.responseText);
-                if(response.status == true)
+        if(USER_CREATED)
+        {
+            var request = new XMLHttpRequest();
+            request.open('POST', '/gameready', true);
+            request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            request.onreadystatechange = function() {
+                if (request.readyState == XMLHttpRequest.DONE)
                 {
-                    getUpdate();        
+                    var response = JSON.parse(request.responseText);
+                    if(response.status == true)
+                    {
+                        getUpdate();        
+                    }
                 }
+
             }
-
+            request.send(JSON.stringify(UID));
         }
-        request.send(JSON.stringify(UID));
-
     }   
 
     function getUpdate()
@@ -231,8 +233,9 @@ function sendPlayer(username, playerIcon)
         {
                 var response = JSON.parse(request.responseText);
                 if(response.uid)
-                {        
-                        UID = "asdf"//response.uid;
+                {
+                        UID = response.uid;
+                        USER_CREATED = true;
                 }
         }
 
