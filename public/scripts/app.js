@@ -21,12 +21,12 @@ var USER_SELECTION = {
     uid: null
 };
 
-var MAIN_MAP = null;
-var GRAPHICS_LAYER = null;
 var NEEDS_UPDATE = false;
 var STATE_OUTPUT = null;
 var USER_CREATED = false;
+var MAP = null;
 
+var QUIT = true;
 
 require([
     "esri/map",
@@ -35,16 +35,15 @@ require([
     "esri/graphic", "esri/layers/GraphicsLayer",
     "esri/geometry/Point", "esri/symbols/PictureMarkerSymbol",
     "esri/geometry/webMercatorUtils",
-    "dojo/domReady!"
+    "dojo/domReady!", "esri/process/Processor"
 ], function(Map,
             InfoTemplate,
             VectorTileLayer,
             Graphic, GraphicsLayer,
             Point, PictureMarkerSymbol,
-            webMercatorUtils) {
+            webMercatorUtils, Processor) {
 
     var drawPlayers = function(map, gl, players) {
-            debugger;
         players.forEach(function(player) {
             var point = new Point(player.position.x,
                                   player.position.y,
@@ -74,10 +73,14 @@ require([
         });
     };
 
-    var renderScene = function(map, gl, serverOutput) {
-        //TODO: reset graphics
-        drawPlayers(map, gl, serverOutput.players);
-        drawLocations(map, gl, serverOutput.locations);
+    var renderScene = function(serverOutput) {
+        //if(MAP.getLayer("graphicsLayer") != null)
+        //    MAP.removeLayer(MAP.getLayer("graphicsLayer"));
+        var gl = new GraphicsLayer({id:"graphicsLayer"});
+
+        MAP.addLayer(gl);
+        drawPlayers(MAP, gl, serverOutput.players);
+        drawLocations(MAP, gl, serverOutput.locations);
     };
 
     var initMap = function(center, zoom) {
@@ -96,20 +99,15 @@ require([
         });
 
         var tileLayer = new VectorTileLayer("/data/basemap-theme.json");
-        var gl = new GraphicsLayer();
         map.addLayer(tileLayer);
-        map.addLayer(gl);
+MAP = map;
 
-        
-        
-        MAIN_MAP = map;
-        GRAPHICS_LAYER = gl;
-        //renderScene(map, graphicsLayer, mock_server_output);
     };
+
 
     function checkForUpdate()
     {
-        if(USER_CREATED)
+        if(USER_CREATED && QUIT)
         {
             var request = new XMLHttpRequest();
             request.open('POST', '/gameready', true);
@@ -120,12 +118,17 @@ require([
                     var response = JSON.parse(request.responseText);
                     if(response.status == true)
                     {
-                        getUpdate();        
+                        getUpdate();
                     }
                 }
 
             }
-            request.send(JSON.stringify(UID));
+            var uid = {
+                    uid: UID
+            };
+
+            request.send(JSON.stringify(uid));
+            QUIT = false;
         }
     }   
 
@@ -140,7 +143,7 @@ require([
                 var data = JSON.parse(request.responseText);
                 STATE_OUTPUT = data;
                 NEEDS_UPDATE = true;
-                renderScene(MAIN_MAP, GRAPHICS_LAYER, data);
+        renderScene(STATE_OUTPUT);
             } else {scripts/app.js
             // We reached our target server, but it returned an error
 
@@ -155,7 +158,7 @@ require([
     }
 
     initMap([15, 65], 4);
-    setInterval(checkForUpdate,1000);
+    setInterval(checkForUpdate,10000);
 });
 
 
@@ -205,7 +208,7 @@ function addIcons(parentDiv){
         var curRadio = document.createElement("input");
         curRadio.setAttribute("type", "radio");
         curRadio.setAttribute("name", "Icons");
-        curRadio.setAttribute("value", "player" + (i + 1));
+        curRadio.setAttribute("value", i + 1);
         var curImage = document.createElement("img");
         curImage.setAttribute("src", icons[i]);
         curNode.appendChild(curRadio);
@@ -311,6 +314,6 @@ function gameUpdate()
 {
     if(NEEDS_UPDATE)
     {
-        updateSidePanel(SERVER_OUTPUT['options'], SERVER_OUTPUT['events'], SERVER_OUTPUT['players']);
+        updateSidePanel(STATE_OUTPUT['options'], STATE_OUTPUT['events'], STATE_OUTPUT['players']);
     }
 }
