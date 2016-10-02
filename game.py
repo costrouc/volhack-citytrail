@@ -12,6 +12,7 @@ def gen_random_position(x_bounds, y_bounds):
 class Game:
     MAX_PLAYERS = 1
     MAX_LOCATIONS = 5
+    NAMES = ['Max', 'Bob', 'Scott', 'Mike', 'Chris', 'Arnold']
 
     LOCATION_TYPES = ['CAR', 'BIKE', 'EXIT']
     X_BOUNDS = [-100.0, 100.0]
@@ -48,6 +49,12 @@ class Game:
         """
         if len(self.players) == self.MAX_PLAYERS:
             return None
+
+        if user['username'] == '':
+            user['username'] = random.choice(self.NAMES)
+
+        if user['icon'] == '':
+            user['icon'] = 3
 
         user.update({
             'uid': str(uuid.uuid4()),
